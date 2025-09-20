@@ -1,0 +1,208 @@
+/* 基础样式设置 */
+@layer base {
+    html {
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+}
+
+/* 自定义工具类 */
+@layer utilities {
+    .content-auto {
+        content-visibility: auto;
+    }
+    .search-container {
+        max-width: 800px;
+    }
+    .result-item {
+        transition: all 0.3s ease;
+    }
+    .result-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .highlight {
+        background-color: #FFF380;
+        font-weight: bold;
+    }
+    .info-label {
+        color: #6366F1;
+        font-weight: 500;
+    }
+    .relevance-badge {
+        text-xs: px-2 py-1 rounded ml-2;
+    }
+}
+
+/* 组件样式 */
+body {
+    @apply bg-gray-50 min-h-screen;
+}
+
+header {
+    @apply bg-gradient-to-r from-primary to-secondary text-white shadow-lg;
+}
+
+header .container {
+    @apply mx-auto px-4 py-8 text-center;
+}
+
+header h1 {
+    @apply text-[clamp(2rem,5vw,3rem)] font-bold mb-2;
+}
+
+header p {
+    @apply text-lg opacity-90;
+}
+
+main {
+    @apply container mx-auto px-4 py-8;
+}
+
+.search-container {
+    @apply mx-auto;
+}
+
+/* 搜索框区域 */
+.search-container > div:first-of-type {
+    @apply bg-white rounded-lg shadow-md p-6 mb-8 transform transition-all duration-300 hover:shadow-lg;
+}
+
+.search-container .flex {
+    @apply flex flex-col md:flex-row gap-4;
+}
+
+#search-input {
+    @apply flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all;
+}
+
+#search-btn {
+    @apply bg-primary hover:bg-secondary text-white px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2;
+}
+
+/* 搜索选项 */
+.search-container .flex-wrap {
+    @apply mt-4 flex flex-wrap items-center text-sm text-gray-500 gap-x-6 gap-y-2;
+}
+
+.search-container label {
+    @apply flex items-center gap-2 cursor-pointer;
+}
+
+.search-container input[type="checkbox"] {
+    @apply h-4 w-4 text-primary rounded;
+}
+
+/* 状态提示区域 */
+#status-message {
+    @apply hidden mb-6 p-4 rounded-lg bg-blue-50 text-blue-700 border border-blue-200;
+}
+
+#status-message i {
+    @apply fa fa-info-circle mr-2;
+}
+
+#loading-indicator {
+    @apply hidden mb-6 text-center py-8;
+}
+
+#loading-indicator div {
+    @apply inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary;
+}
+
+#loading-indicator p {
+    @apply mt-4 text-gray-600;
+}
+
+/* 搜索结果区域 */
+#results-container {
+    @apply hidden;
+}
+
+#results-container > div:first-of-type {
+    @apply flex justify-between items-center mb-4;
+}
+
+#results-container h2 {
+    @apply text-xl font-semibold text-gray-800;
+}
+
+#clear-btn {
+    @apply text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1;
+}
+
+#results-list {
+    @apply space-y-4;
+}
+
+/* 无结果提示 */
+#no-results {
+    @apply hidden mb-6 p-8 text-center bg-gray-50 rounded-lg border border-gray-200;
+}
+
+#no-results i {
+    @apply fa fa-search-minus text-4xl text-gray-400 mb-4;
+}
+
+#no-results h3 {
+    @apply text-lg font-medium text-gray-700;
+}
+
+#no-results p {
+    @apply text-gray-500 mt-2;
+}
+
+/* 错误提示 */
+#error-message {
+    @apply hidden mb-6 p-4 rounded-lg bg-red-50 text-red-700 border border-red-200;
+}
+
+#error-message i {
+    @apply fa fa-exclamation-circle mr-2;
+}
+
+/* 结果项样式 */
+.result-item {
+    @apply bg-white p-5 rounded-lg shadow-sm border border-gray-100;
+}
+
+.result-item h3 {
+    @apply text-lg font-semibold text-gray-800 mb-3;
+}
+
+.result-item .mb-3 {
+    @apply mb-3;
+}
+
+.result-item .ml-4 {
+    @apply ml-4 mt-2 space-y-2;
+}
+
+.result-item .text-sm {
+    @apply text-sm text-gray-500;
+}
+
+.result-item .text-xs {
+    @apply text-xs text-gray-500 mt-2;
+}
+
+/* 相关性标签样式 */
+.relevance-badge.bg-green-100 {
+    @apply bg-green-100 text-green-800;
+}
+
+.relevance-badge.bg-yellow-100 {
+    @apply bg-yellow-100 text-yellow-800;
+}
+
+/* 页脚样式 */
+footer {
+    @apply bg-gray-800 text-white py-6 mt-12;
+}
+
+footer .container {
+    @apply container mx-auto px-4 text-center;
+}
+
+footer p:last-of-type {
+    @apply text-sm text-gray-400 mt-2;
+}

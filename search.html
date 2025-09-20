@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>狐拾一搜索引擎</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="search.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',    // 主色调（蓝）
+                        secondary: '#1E40AF',  // 次要色调（深蓝）
+                        neutral: '#F3F4F6',    // 中性色（浅灰）
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto { content-visibility: auto; }
+            .search-container { max-width: 800px; }  /* 搜索区最大宽度 */
+            .result-item { transition: all 0.3s ease; }  /* 结果项 hover 动画 */
+            .result-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+            .highlight { background-color: #FFF380; font-weight: bold; }  /* 关键词高亮 */
+            .info-label { color: #6366F1; font-weight: 500; }  /* 信息类型标签色 */
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 页面头部 -->
+    <header class="bg-gradient-to-r from-primary to-secondary text-white shadow-lg">
+        <div class="container mx-auto px-4 py-8 text-center">
+            <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold mb-2">狐拾一搜索引擎</h1>
+            <p class="text-lg opacity-90">狐拾一搜索引擎© 2025 来源:奇喵薄荷 | 整理:器宇轩昂呀</p>
+        </div>
+    </header>
+
+    <!-- 主要内容区 -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="search-container mx-auto">
+            <!-- 搜索框区域 -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8 transform transition-all duration-300 hover:shadow-lg">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <!-- 搜索输入框 -->
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="输入角色名或关键词（如：狐拾一、白泽、财富）..." 
+                        class="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                    >
+                    <!-- 搜索按钮 -->
+                    <button 
+                        id="search-btn" 
+                        class="bg-primary hover:bg-secondary text-white px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+                    >
+                        <i class="fa fa-search"></i>
+                        <span>搜索</span>
+                    </button>
+                </div>
+                <!-- 搜索选项（区分大小写/全词匹配/高级选项） -->
+                <div class="mt-4 flex flex-wrap items-center text-sm text-gray-500 gap-x-6 gap-y-2">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="case-sensitive" class="h-4 w-4 text-primary rounded">
+                        <span>区分大小写</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="whole-words" class="h-4 w-4 text-primary rounded">
+                        <span>全词匹配</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="fuzzy-search" class="h-4 w-4 text-primary rounded" checked>
+                        <span>模糊匹配</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="relevance-sort" class="h-4 w-4 text-primary rounded" checked>
+                        <span>按相关性排序</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 状态提示区域 -->
+            <div id="status-message" class="hidden mb-6 p-4 rounded-lg bg-blue-50 text-blue-700 border border-blue-200">
+                <i class="fa fa-info-circle mr-2"></i>
+                <span>请输入角色名或关键词进行搜索</span>
+            </div>
+
+            <div id="loading-indicator" class="hidden mb-6 text-center py-8">
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                <p class="mt-4 text-gray-600">正在加载角色资料库并搜索...</p>
+            </div>
+
+            <!-- 搜索结果区域 -->
+            <div id="results-container" class="hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <span id="results-count">0</span> 个搜索结果
+                    </h2>
+                    <button id="clear-btn" class="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1">
+                        <i class="fa fa-times"></i>
+                        <span>清除结果</span>
+                    </button>
+                </div>
+                <div id="results-list" class="space-y-4">
+                    <!-- 搜索结果将通过JS动态插入 -->
+                </div>
+            </div>
+
+            <!-- 无结果提示 -->
+            <div id="no-results" class="hidden mb-6 p-8 text-center bg-gray-50 rounded-lg border border-gray-200">
+                <i class="fa fa-search-minus text-4xl text-gray-400 mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-700">未找到匹配结果</h3>
+                <p class="text-gray-500 mt-2">请尝试调整搜索词或取消"全词匹配"选项</p>
+            </div>
+
+            <!-- 错误提示 -->
+            <div id="error-message" class="hidden mb-6 p-4 rounded-lg bg-red-50 text-red-700 border border-red-200">
+                <i class="fa fa-exclamation-circle mr-2"></i>
+                <span id="error-text">加载资料库出错，请检查文件路径是否正确</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>狐拾一搜索引擎© 2025</p>
+            <p class="text-sm text-gray-400 mt-2">来源:奇喵薄荷 | 整理:器宇轩昂呀</p>
+        </div>
+    </footer>
+</body>
+</html>
